@@ -27,7 +27,6 @@ func TestValidateHKID(t *testing.T) {
 			if ok != tt.shouldBeOK {
 				t.Fail()
 			}
-
 		})
 	}
 }
