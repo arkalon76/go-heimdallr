@@ -9,9 +9,10 @@ func TestValidateHKID(t *testing.T) {
 		id         string
 		shouldBeOK bool
 	}{
+		{name: "Unnormalized-M Card", id: "E364912(5)", shouldBeOK: true},
 		{name: "Unnormalized-M Card", id: "M812318(2)", shouldBeOK: true},
 		{name: "OK-M Card", id: "M8123182", shouldBeOK: true},
-		{name: "OK-S Card", id: "S1599462", shouldBeOK: true},
+		{name: "OK-S Card", id: "J4479871", shouldBeOK: true},
 		{name: "OK-I Card", id: "I336251A", shouldBeOK: true},
 		{name: "OK-T Card", id: "T4293376", shouldBeOK: true},
 		{name: "OK-T Card", id: "R914749(6)", shouldBeOK: true},
@@ -20,7 +21,7 @@ func TestValidateHKID(t *testing.T) {
 		{name: "Invalid-O not allowed", id: "O8123182", shouldBeOK: false},
 		{name: "Invalid-ShortLen", id: "M812318", shouldBeOK: false},
 		{name: "Invalid-LongLen", id: "M81231888", shouldBeOK: false},
-		{name: "Invalid-Letter in wrong place", id: "M812D188", shouldBeOK: true},
+		{name: "Invalid-Letter in wrong place", id: "M812D188", shouldBeOK: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

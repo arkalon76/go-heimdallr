@@ -18,9 +18,7 @@ limitations under the License.
 package heimdallr
 
 import (
-	"fmt"
 	"regexp"
-	"strconv"
 )
 
 const (
@@ -36,8 +34,6 @@ const (
 //
 // XX999999C / X999999C
 func validateCheckNumber(normalizedID string) bool {
-	//B123456(6)
-	//36 * 9 + char[2] * 8 + char[2] * 8 + char[3] * 7 + char[4] * 6 + char[5] * 5 + char[6] * 4 + char[7] * 3 + char[8] * 2
 	sc := []rune(normalizedID)
 
 	// Check if the second character is a letter or not. Below 10 then not a letter
@@ -47,25 +43,32 @@ func validateCheckNumber(normalizedID string) bool {
 			if i == (len(sc) - 1) {
 				break
 			}
-			weight := 8 - i //TODO V needs to be converted to a Int if its and int and THe letter int convertion if its a letter to. Now it all thingks is a letter wich gives us minus
-			fmt.Printf("Loop for %s. I=%d, weight=%d, sum=%d, append=%d", normalizedID, i, weight, sum, ((int(v) - CHARACTER_OFFSET) * weight))
-			sum += ((int(v) - CHARACTER_OFFSET) * weight)
+			weight := 8 - i
+			sum += (runeToInt(v) * weight)
+			// fmt.Printf("Loop for %s. R=%#U,%d I=%d, weight=%d, sum=%d, append=%d  ==||==  ", normalizedID, v, runeToInt(v), i, weight, sum, (runeToInt(v) * weight))
+
 		}
 		// sum := 36*9 + ((int(sc[0])-CHARACTER_OFFSET)*8) + ((int(sc[1])-CHARACTER_OFFSET)*7) + ((int(sc[2])-CHARACTER_OFFSET)*6) + (int(sc[3])-CHARACTER_OFFSET)*5 + (int(sc[4])-CHARACTER_OFFSET)*4 + (int(sc[5])-CHARACTER_OFFSET)*3 + (int(sc[6])-CHARACTER_OFFSET)*2
 		checkDigit := 11 - (sum % 11)
-		idcheck, err := strconv.Atoi(string(sc[7]))
-		if err != nil {
-			return false
-		}
+		idcheck := runeToInt(sc[7])
+
 		if checkDigit != idcheck {
-			fmt.Printf("INVALID_ID %s - Check digit is %d and rune 7 is %d\n", normalizedID, checkDigit, idcheck)
 			return false
 		} else {
-			fmt.Printf("VALID_ID %s - Check digit is %d and rune 7 is %d\n", normalizedID, checkDigit, idcheck)
 			return true
 		}
 	}
 	return false
+}
+
+func runeToInt(r rune) int {
+	var intvalue int
+	if int(r) > 64 {
+		intvalue = int(r) - 55
+	} else {
+		intvalue = int(r) - 48
+	}
+	return intvalue
 }
 
 // ValidateHKID will check if the given Hong Kong ID number is correctly formatted and
