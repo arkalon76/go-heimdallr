@@ -23,9 +23,10 @@ import (
 
 const (
 	// VALID_FORMAT describes a normalized HKID. Example: R5533446
-	VALID_FORMAT     = `^[A-NP-Z]{1,2}[0-9]{6}[0-9A]$`
-	NORMALIZE        = `[\(\)]`
-	CHARACTER_OFFSET = 55
+	VALID_FORMAT       = `^[A-NP-Z]{1,2}[0-9]{6}[0-9A]$`
+	NORMALIZE          = `[\(\)]`
+	CHARACTER_OFFSET   = 55
+	PREFIX_SPACE_VALUE = 324
 )
 
 // validateCheckNumber will calculate the checksum and validate it to the given code
@@ -35,30 +36,29 @@ const (
 // XX999999C / X999999C
 func validateCheckNumber(normalizedID string) bool {
 	sc := []rune(normalizedID)
-
-	// Check if the second character is a letter or not. Below 10 then not a letter
-	if int(sc[1])-CHARACTER_OFFSET < 10 {
-		sum := 36 * 9
-		for i, v := range sc {
-			if i == (len(sc) - 1) {
-				break
-			}
-			weight := 8 - i
-			sum += (runeToInt(v) * weight)
-			// fmt.Printf("Loop for %s. R=%#U,%d I=%d, weight=%d, sum=%d, append=%d  ==||==  ", normalizedID, v, runeToInt(v), i, weight, sum, (runeToInt(v) * weight))
-
-		}
-		// sum := 36*9 + ((int(sc[0])-CHARACTER_OFFSET)*8) + ((int(sc[1])-CHARACTER_OFFSET)*7) + ((int(sc[2])-CHARACTER_OFFSET)*6) + (int(sc[3])-CHARACTER_OFFSET)*5 + (int(sc[4])-CHARACTER_OFFSET)*4 + (int(sc[5])-CHARACTER_OFFSET)*3 + (int(sc[6])-CHARACTER_OFFSET)*2
-		checkDigit := 11 - (sum % 11)
-		idcheck := runeToInt(sc[7])
-
-		if checkDigit != idcheck {
-			return false
-		} else {
-			return true
-		}
+	var sum int
+	// If we only have 8 character then add
+	if len(sc) == 8 {
+		sum = PREFIX_SPACE_VALUE
 	}
-	return false
+	for i, v := range sc {
+		if i == (len(sc) - 1) {
+			break
+		}
+		weight := len(sc) - i
+		sum += (runeToInt(v) * weight)
+		//mt.Printf("Loop for %s. R=%#U,%d I=%d, weight=%d, sum=%d, append=%d  ==||==  ", normalizedID, v, runeToInt(v), i, weight, sum, (runeToInt(v) * weight))
+
+	}
+	// sum := 36*9 + ((int(sc[0])-CHARACTER_OFFSET)*8) + ((int(sc[1])-CHARACTER_OFFSET)*7) + ((int(sc[2])-CHARACTER_OFFSET)*6) + (int(sc[3])-CHARACTER_OFFSET)*5 + (int(sc[4])-CHARACTER_OFFSET)*4 + (int(sc[5])-CHARACTER_OFFSET)*3 + (int(sc[6])-CHARACTER_OFFSET)*2
+	checkDigit := 11 - (sum % 11)
+	idcheck := runeToInt(sc[len(sc)-1])
+
+	if checkDigit != idcheck {
+		return false
+	} else {
+		return true
+	}
 }
 
 func runeToInt(r rune) int {
