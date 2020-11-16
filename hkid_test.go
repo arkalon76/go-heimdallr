@@ -9,10 +9,19 @@ func TestValidateHKID(t *testing.T) {
 		id         string
 		shouldBeOK bool
 	}{
+		{name: "Unnormalized-M Card", id: "E364912(5)", shouldBeOK: true},
 		{name: "Unnormalized-M Card", id: "M812318(2)", shouldBeOK: true},
 		{name: "OK-M Card", id: "M8123182", shouldBeOK: true},
-		{name: "OK-Double Character", id: "WE4316017", shouldBeOK: true},
+		{name: "OK-S Card", id: "J4479871", shouldBeOK: true},
+		{name: "OK-I Card", id: "I336251A", shouldBeOK: true},
+		{name: "OK-T Card", id: "T4293376", shouldBeOK: true},
+		{name: "OK-T Card", id: "R914749(6)", shouldBeOK: true},
+		{name: "OK-Double Card", id: "FX330671A", shouldBeOK: true},
+		{name: "OK-Double Card Two", id: "SU0429743", shouldBeOK: true},
+		{name: "OK-Lots zero", id: "A101010A", shouldBeOK: true},
+		{name: "OK-Double Character", id: "JF1061963", shouldBeOK: true},
 		{name: "OK-End with Char", id: "W392026A", shouldBeOK: true},
+		{name: "OK-Unformated Double", id: "AB987654(3)", shouldBeOK: true},
 		{name: "Invalid-O not allowed", id: "O8123182", shouldBeOK: false},
 		{name: "Invalid-ShortLen", id: "M812318", shouldBeOK: false},
 		{name: "Invalid-LongLen", id: "M81231888", shouldBeOK: false},
