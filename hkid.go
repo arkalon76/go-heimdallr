@@ -42,7 +42,7 @@ func validateCheckNumber(normalizedID string) bool {
 		sum = PREFIX_SPACE_VALUE
 	}
 	for i, v := range sc {
-		if i == (len(sc) - 1) {
+		if i == (len(sc) - 1) { //We exit early so we don't add check digit into our calculation
 			break
 		}
 		weight := len(sc) - i
