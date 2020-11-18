@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// heimdallr package description
+//Package heimdallr package description
 package heimdallr
 
 import (
@@ -23,9 +23,12 @@ import (
 
 const (
 	// VALID_FORMAT describes a normalized HKID. Example: R5533446
-	VALID_FORMAT       = `^[A-NP-Z]{1,2}[0-9]{6}[0-9A]$`
-	NORMALIZE          = `[\(\)]`
-	CHARACTER_OFFSET   = 55
+	VALID_FORMAT = `^[A-NP-Z]{1,2}[0-9]{6}[0-9A]$`
+	//NORMALIZE is used to remove brackes on the back of a HKID
+	NORMALIZE = `[\(\)]`
+	//CHARACTER_OFFSET the amount of ASCII numbers to remove to get the true value
+	CHARACTER_OFFSET = 55
+	//PREFIX_SPACE_VALUE is the number to be appended if a HKID only contains a single prefix character i.e R45XXXXXX rather than RT33XXXXX
 	PREFIX_SPACE_VALUE = 324
 )
 
@@ -54,11 +57,7 @@ func validateCheckNumber(normalizedID string) bool {
 	checkDigit := 11 - (sum % 11)
 	idcheck := runeToInt(sc[len(sc)-1])
 
-	if checkDigit != idcheck {
-		return false
-	} else {
-		return true
-	}
+	return checkDigit == idcheck
 }
 
 func runeToInt(r rune) int {
